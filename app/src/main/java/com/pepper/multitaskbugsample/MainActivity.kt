@@ -32,36 +32,39 @@ class MainActivity : AppCompatActivity() {
 
     private fun createFaultyIntents(): Array<Intent> {
         val secondActivityIntent = Intent(this, SecondActivity::class.java)
-        secondActivityIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+        secondActivityIntent.flags =
+            Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+
+        val taskStackBuilder =
+            TaskStackBuilder.create(this)
+        taskStackBuilder.addNextIntentWithParentStack(secondActivityIntent)
 
         val intents: Array<Intent> =
-            arrayOf(
-                Intent(applicationContext, MainActivity::class.java),
-                secondActivityIntent
-            )
-        intents[0].flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            taskStackBuilder.intents
+
         return intents
     }
 
 
     private fun createBufferActivityNotification(): Notification {
         createNotificationChannel()
-       val bufferActivityIntent = Intent(this,BufferActivity::class.java).apply {
-           addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-           putParcelableArrayListExtra(
-               DEST_EXTRA,
-               ArrayList<Intent>().apply { addAll(createFaultyIntents()) }
-           )
-       }
-        val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 0, bufferActivityIntent, 0)
+        val bufferActivityIntent = Intent(this, BufferActivity::class.java).apply {
+            addFlags( Intent.FLAG_ACTIVITY_NEW_TASK)
+            putParcelableArrayListExtra(
+                DEST_EXTRA,
+                ArrayList<Intent>().apply { addAll(createFaultyIntents()) }
+            )
+        }
+        val pendingIntent: PendingIntent =
+            PendingIntent.getActivity(this, 0, bufferActivityIntent, 0)
 
         return NotificationCompat.Builder(this, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_launcher_foreground)
-                .setContentTitle("click me")
-                .setContentText("...")
-                .setContentIntent(pendingIntent)
-                .setAutoCancel(true)
-                .build()!!
+            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setContentTitle("click me")
+            .setContentText("...")
+            .setContentIntent(pendingIntent)
+            .setAutoCancel(true)
+            .build()!!
     }
 
     private fun createNotificationChannel() {
