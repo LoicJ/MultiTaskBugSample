@@ -18,7 +18,9 @@
 
         <activity
             android:name=".BufferActivity"
-            android:launchMode="singleTop" />
+            android:taskAffinity=""
+            android:excludeFromRecents="true"
+            android:launchMode="singleTask" />
 
         <activity android:name=".MainActivity"
             android:launchMode="singleTop">
